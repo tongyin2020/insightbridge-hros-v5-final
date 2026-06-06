@@ -41,6 +41,8 @@ try:
     FIRECRAWL_OK = True
 except ImportError:
     FIRECRAWL_OK = False
+    import logging as _log
+    _log.getLogger(__name__).warning("firecrawl-py 未安装，所有FC信号将降级为模拟值")
 
 CACHE_DB  = Path(__file__).parent.parent / "crewai_cache.db"
 CACHE_TTL = 3600  # 1小时内复用缓存，节省免费额度
@@ -276,7 +278,7 @@ def fetch_ota_booking_pace_signal(checkin: str) -> dict:
         total_hotels = max(1, len(re.findall(r'MOP\s*[\d,]+', md)))
 
         pace = min(1.0, urgency_count * 0.05 + sold_out / total_hotels * 0.5)
-        if md and len(md) > 500:  # 确认抓到了内容
+        if md and len(md) > 10000:  # 确认抓到了完整Booking.com搜索结果页（通常>100KB）
             result = {"signal": round(max(0.0, pace), 3),
                       "urgency_count": urgency_count,
                       "sold_out": sold_out,

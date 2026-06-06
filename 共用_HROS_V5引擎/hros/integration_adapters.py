@@ -43,7 +43,10 @@ def normalize_signal(raw: Dict[str, Any]) -> MarketSignal:
 
 def apply_hros_to_mare_result(result: Dict[str, Any], raw_signal: Dict[str, Any]) -> Dict[str, Any]:
     """Drop-in adapter for MARE output dictionaries."""
-    signal = normalize_signal(raw_signal)
+    try:
+        signal = normalize_signal(raw_signal)
+    except (ValueError, TypeError) as _e:
+        return {**result, 'hros_error': str(_e), 'risk_score': None, 'opportunity_score': None}
     layer = RevenueDecisionLayer()
     decision = layer.optimize_price(
         signal=signal,

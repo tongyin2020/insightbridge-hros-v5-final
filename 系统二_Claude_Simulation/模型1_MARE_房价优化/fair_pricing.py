@@ -219,7 +219,7 @@ class FairPricingEngine:
         price = proposed_price
 
         # Velocity
-        prev = context.get("previous_price", 0)
+        prev = context.get("previous_price") or 0
         season = context.get("season", "shoulder")
         vel_price, vel_reason, vel_capped = self.velocity_check(price, prev, season)
         report["velocity"] = {
@@ -230,7 +230,7 @@ class FairPricingEngine:
         price = vel_price
 
         # Fairness index
-        avg_30d = context.get("avg_30d_price", 0)
+        avg_30d = context.get("avg_30d_price") or 0
         fi_score, fi_assessment = self.customer_fairness_index(price, avg_30d)
         report["fairness_index"] = {
             "score": fi_score,
@@ -238,7 +238,7 @@ class FairPricingEngine:
         }
 
         # Historical anchor
-        hist_avg = context.get("historical_avg", 0)
+        hist_avg = context.get("historical_avg") or 0
         max_dev = context.get("max_deviation_pct", 25.0)
         anc_price, anc_reason = self.historical_anchor(price, hist_avg, max_dev)
         report["historical_anchor"] = {
@@ -249,7 +249,7 @@ class FairPricingEngine:
 
         # Loyalty
         tier = context.get("loyalty_tier", "")
-        cust_rate = context.get("customer_historical_rate", 0)
+        cust_rate = context.get("customer_historical_rate") or 0
         loy_price, loy_reason = self.loyal_customer_adjustment(price, tier, cust_rate)
         report["loyalty_cap"] = {
             "adjusted_price": loy_price,
