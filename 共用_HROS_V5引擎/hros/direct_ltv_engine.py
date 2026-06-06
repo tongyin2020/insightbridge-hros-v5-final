@@ -11,6 +11,7 @@ class DirectLTVDecision:
     direct_wins: bool
     discount_rate: float
     discounted_future_value: float
+    decision_reason: dict = None  # Added V5.1: matches schemas.py interface
 
 class DirectLTVEngine:
     def evaluate_direct_offer(
@@ -50,4 +51,10 @@ class DirectLTVEngine:
             direct_wins=direct_advantage > 0,
             discount_rate=discount_rate,
             discounted_future_value=round(discounted_future_value, 2),
+            decision_reason={
+                'direct_price': direct_price, 'ota_gross_price': ota_gross_price,
+                'ota_commission_rate': ota_commission_rate,
+                'repeat_probability': repeat_probability,
+                'future_margin': future_margin, 'discount_rate': discount_rate,
+            },
         )

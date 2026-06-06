@@ -83,7 +83,8 @@ class RevenueDecisionLayer:
             price += step
             search_steps += 1
 
-        assert best is not None
+        if best is None:
+            raise ValueError(f"No valid price found in range [{floor:.0f}, {ceiling:.0f}] with step={step}")
         baseline_revpar = market * signal.base_occ
         lift_pct = ((best["revpar"] - baseline_revpar) / baseline_revpar * 100.0) if baseline_revpar > 0 else 0.0
         opportunity = self.opportunity_engine.score(signal)

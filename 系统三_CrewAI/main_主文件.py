@@ -71,14 +71,13 @@ from run_simulation import (
     _build_hotel_roster, _jitter, MACAU_HOLIDAYS_2026,
     run_23star_test, run_director_crm_test, run_45star_test,
     detect_anomalies,
-    compute_dynamic_base_price,   # DSEC×85% + MakCorps×15% 动态base_price
+    compute_dynamic_base_price,   # DSEC×75% + OTA×25% 动态base_price
 )
 
 # ── Phase 2 弹性引擎 ──────────────────────────────────────────────────
-import sys as _sys_elast
 _COLLECTOR_DIR_CREWAI = "/Users/tongyin/Desktop/InsightBridge_模型测试系统/hotel_collector"
-if _COLLECTOR_DIR_CREWAI not in _sys_elast.path:
-    _sys_elast.path.insert(0, _COLLECTOR_DIR_CREWAI)
+if _COLLECTOR_DIR_CREWAI not in sys.path:
+    sys.path.insert(0, _COLLECTOR_DIR_CREWAI)
 try:
     from elasticity_engine import optimize_price as _elasticity_optimize
     _ELASTICITY_OK_CREWAI = True
@@ -94,10 +93,9 @@ except ImportError:
         )
 
 # ── 切换为澳门旅游局官方76家真实酒店 ─────────────────────────────────────────
-import sys as _sys_main
 _SIM_DIR_MAIN = "/Users/tongyin/Desktop/Hotel Model Rvisions/simulation_test"
-if _SIM_DIR_MAIN not in _sys_main.path:
-    _sys_main.path.insert(0, _SIM_DIR_MAIN)
+if _SIM_DIR_MAIN not in sys.path:
+    sys.path.insert(0, _SIM_DIR_MAIN)
 try:
     from hotel_roster_76 import HOTELS_3STAR as HOTELS_23_STAR, HOTELS_45STAR as HOTELS_45_STAR, ALL_HOTELS_76 as ALL_HOTELS
 except ImportError:
@@ -421,7 +419,7 @@ def main():
                         market_price    = mkt_price,
                         star            = hotel["star"],
                         district        = hotel.get("district", "NAPE"),
-                        demand_level    = signal.get("demand_state", "NORMAL"),
+                        demand_level    = result.get("demand_state", signal.get("demand_state", "NORMAL")),
                         season          = signal.get("season", "normal"),
                         hotel_id        = hotel.get("hotel_id"),
                     )

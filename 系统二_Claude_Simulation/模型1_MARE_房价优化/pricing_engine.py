@@ -473,7 +473,8 @@ def recommend(data, hotel_settings=None):
         "factor_breakdown": breakdown[:8],
     }
 
-    return {
+    # ── HROS V5 字段追加 ─────────────────────────────────────────────
+    result_dict = {
         "hotel_id": data.hotel_id,
         "market_segment": "macau_3star_plus",
         "season": data.season,
@@ -521,7 +522,7 @@ def apply_hros_v5_fields(result: dict, data) -> dict:
         import sys, os
         _hros_path = os.path.join(os.path.dirname(__file__), "../../../../")
         _expert_path = os.path.expanduser(
-            "~/Desktop/InsightBridge_完整代码_专家审查V4/共用_基础组件")
+            "~/Desktop/InsightBridge_HROS_V5_Final/共用_HROS_V5引擎")
         for _p in [_hros_path, _expert_path]:
             if _p not in sys.path:
                 sys.path.insert(0, _p)

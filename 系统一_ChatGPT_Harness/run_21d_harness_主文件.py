@@ -4,7 +4,6 @@
 This script is designed to run on the user's Mac from a Python terminal.
 It uses:
 - Firecrawl for public web signals
-- MakCorps for OTA market prices
 - AgentOps for run monitoring
 - Direct Python subprocess calls into the two backend model kernels
 
@@ -32,10 +31,9 @@ import requests
 from dotenv import load_dotenv
 
 # ── 声誉情感引擎 + DSEC市场数据（hotel_collector 同目录）
-import sys as _sys
 _SENTIMENT_DIR = Path("/Users/tongyin/Desktop/InsightBridge_模型测试系统/hotel_collector")
-if str(_SENTIMENT_DIR) not in _sys.path:
-    _sys.path.insert(0, str(_SENTIMENT_DIR))
+if str(_SENTIMENT_DIR) not in sys.path:
+    sys.path.insert(0, str(_SENTIMENT_DIR))
 try:
     from sentiment_engine import get_reputation_signals as _get_rep_signals
     _SENTIMENT_OK = True
@@ -75,8 +73,8 @@ except ImportError:
 
 # ── 自主获客模型（从 simulation_test 复用）─────────────────────────────────
 _SIM_DIR = Path("/Users/tongyin/Desktop/Hotel Model Rvisions/simulation_test")
-if str(_SIM_DIR) not in _sys.path:
-    _sys.path.insert(0, str(_SIM_DIR))
+if str(_SIM_DIR) not in sys.path:
+    sys.path.insert(0, str(_SIM_DIR))
 try:
     from run_simulation import run_45star_test as _run_selfacq
     from data_fetchers.scenario_engine import SCENARIOS as _SIM_SCENARIOS
@@ -225,12 +223,12 @@ def compute_dynamic_base_price(hotel_id: str, star: int,
     w_bar = 1.0 - w_ota
 
     # ── 四层优先级定价参考（MakCorps已停用）────────────────────────────────
-    # 层1：Shifter真实官网BAR → 85%BAR + 15%DSEC背景，再与OTA权重混合
+    # 层1：Shifter真实官网BAR → 75%BAR + 25%DSEC背景，再与OTA权重混合
     # 层2：Shifter真实OTA价折算BAR → 85%折算BAR + 15%DSEC，再与OTA权重混合
     # 层3：冷启动 — DSEC统计局100%作为唯一历史参考（MakCorps已停用，不再混合fallback）
     # 层4：完全冷启动兜底（无任何真实数据）
     if real_bar_avg is not None:
-        # 层1：有Shifter真实BAR — 85%真实BAR + 15%DSEC市场背景
+        # 层1：有Shifter真实BAR — 75%真实BAR + 25%DSEC市场背景
         historical_ref = (0.75 * real_bar_avg + 0.25 * dsec_adr_ref
                           if dsec_adr_ref > 0 else real_bar_avg)
         base = w_bar * historical_ref + w_ota * ota_estimate
@@ -1084,7 +1082,7 @@ def enrich_with_hros_v5(record: dict, snapshot) -> dict:
     try:
         import sys, os
         _p = os.path.expanduser(
-            "~/Desktop/InsightBridge_完整代码_专家审查V4/共用_基础组件")
+            "~/Desktop/InsightBridge_HROS_V5_Final/共用_HROS_V5引擎")
         if _p not in sys.path:
             sys.path.insert(0, _p)
 

@@ -62,10 +62,4 @@ class CRMDecision:
     decision_reason: Dict[str, Any]
 
 
-@dataclass(frozen=True)
-class DirectLTVDecision:
-    direct_wins: bool
-    direct_ltv: float
-    ota_net_revenue: float
-    direct_advantage: float
-    decision_reason: Dict[str, Any]
+# DirectLTVDecision moved to direct_ltv_engine.py (V5.1)
